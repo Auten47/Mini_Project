@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post("/login", (req, res) => {
     const {email, password} = req.body;
+
     db.query(
         "SELECT * FROM users WHERE email = ? ",
         [email],
@@ -15,10 +16,6 @@ router.post("/login", (req, res) => {
                 return  res.status(401).json({message: "User not found"});
 
             const user = result[0]; 
-            // const match = await bcrypt.compare(password, user.password);
-
-            // if(!match)
-            //     return res.status(401).json({message: "Wrong password"})
 
             if(password !== user.password) {
                 return res.status(401).json({message: "Wrong password"})
@@ -27,7 +24,7 @@ router.post("/login", (req, res) => {
             req.session.user = {
                 id: user.id,
                 email: user.email,
-                name: user.name,
+                name: user.fullname,
             };
 
             res.json({

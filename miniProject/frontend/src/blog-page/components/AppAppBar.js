@@ -13,7 +13,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
 import Sitemark from './SitemarkIcon';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -35,17 +39,48 @@ export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
-
-  React.useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
-  }, []);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openMenu = Boolean(anchorEl);
+  const location = useLocation();
 
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/signin");
+React.useEffect(() => {
+  axios
+    .get("http://localhost:5000/api/auth/me", {
+      withCredentials: true,
+    })
+    .then((res) => {
+      setUser(res.data);
+    })
+    .catch(() => {
+      setUser(null);
+    });
+}, [location]);
+
+
+const handleLogout = async () => {
+  await axios.post(
+    "http://localhost:5000/api/auth/logout",
+    {},
+    { withCredentials: true }
+  );
+
+  setUser(null);
+  navigate("/");
+};
+
+  const handleMenu = (even) => {
+      setAnchorEl(even.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const stringAvatar = (name) => {
+    return {
+      children: name ? name[0].toUpperCase() : "?",
+    };
   };
 
   const toggleDrawer = (newOpen) => () => {
@@ -88,7 +123,7 @@ export default function AppAppBar() {
               </Button>
             </Box>
           </Box>
-          <Box vbv
+          <Box
             sx={{
               display: { xs: 'none', md: 'flex' },
               gap: 1,
@@ -116,17 +151,18 @@ export default function AppAppBar() {
               </>
           ) : (
             <>
-            <Button variant="text" size="small">
-              {user.name}
-            </Button>
-            <Button
-              color="error"
-              variant="outlined"
-              size="small"
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
+              <IconButton onClick={handleMenu}>
+                <Avatar {...stringAvatar(user.name || user.fullname)} />
+              </IconButton>
+
+              <Menu 
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleCloseMenu}
+              >
+                <MenuItem disabled>{user.name || user.fullname}</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
             </>
           )}
             <ColorModeIconDropdown />

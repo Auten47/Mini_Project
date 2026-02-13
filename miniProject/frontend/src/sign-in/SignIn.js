@@ -16,9 +16,13 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './components/ForgotPassword';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './components/CustomIcons';
+import { GoogleIcon, SitemarkIcon } from './components/CustomIcons';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useGoogleLogin } from '@react-oauth/google';
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -72,6 +76,18 @@ export default function SignIn(props) {
   const [password, setPassword] = React.useState("");
   const navigate = useNavigate();
 
+
+  const [snack, setSnack] = React.useState({
+    open: false,
+    severity: "success",
+    message: ""
+  });
+
+  const handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnack({ ...snack, open: false });
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -91,17 +107,68 @@ export default function SignIn(props) {
       {
         email,
         password,
-      });
+        
+      }, { withCredentials: true });
 
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Login success");
-      navigate("/");
-      window.location.reload();
+      setSnack({
+        open: true,
+        severity: "success",
+        message: `Welcome ${res.data.user.name} 👋`,
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1200);
+
     }catch(err){
-      alert(err.response?.data?.message || "Login failed");
+      setSnack({
+        open: true,
+        severity: "error",
+        message: err.response?.data?.message || "Login failed"
+      });
     }
   };
+
+const googleLogin = useGoogleLogin({
+  onSuccess: async (tokenResponse) => {
+    try {
+      const res = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`
+          }
+        }
+      );
+
+      await axios.post(
+        "http://localhost:5000/api/auth/google-auth",
+        {
+          email: res.data.email,
+          name: res.data.name,
+        },
+        { withCredentials: true }
+      );
+
+      setSnack({
+        open: true,
+        severity: "success",
+        message: "Google Sign up success",
+      });
+      
+      setTimeout(() => navigate("/"), 1000);
+
+    } catch (err) {
+      setSnack({
+        open: true,
+        severity: "error",
+        message: "Google Sign up failed"
+      });
+    }
+  }
+});
 
   const validateInputs = () => {
     let isValid = true;
@@ -217,19 +284,12 @@ export default function SignIn(props) {
             <Button
               fullWidth
               variant="outlined"
-              onClick={() => alert('Sign in with Google')}
+              onClick={() => googleLogin()}
               startIcon={<GoogleIcon />}
             >
               Sign in with Google
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Facebook')}
-              startIcon={<FacebookIcon />}
-            >
-              Sign in with Facebook
-            </Button>
+
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
               <Link
@@ -241,6 +301,31 @@ export default function SignIn(props) {
               </Link>
             </Typography>
           </Box>
+
+          <Snackbar
+            open={snack.open}
+            autoHideDuration={3000}
+            onClose={handleCloseSnack}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+          <Alert
+            onClose={handleCloseSnack}
+            severity={snack.severity}
+            variant="filled"
+            sx={{ 
+              width: '100%' ,
+              ...(snack.severity === "success" && {
+              bgcolor: "success.main",
+              color: "#000000" ,
+              '& .MuiAlert-icon': {
+                  color: "#030303"   // change icon color
+                }
+              })
+            }}
+          >
+            {snack.message}
+          </Alert>
+          </Snackbar>
         </Card>
       </SignInContainer>
     </AppTheme>

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
@@ -15,8 +13,13 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './components/CustomIcons';
+import { GoogleIcon, SitemarkIcon } from './components/CustomIcons';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useGoogleLogin } from '@react-oauth/google';
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -67,6 +70,33 @@ export default function SignUp(props) {
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const navigate = useNavigate();
+  const [fullname, setFullname] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [open, setOpen] = React.useState(false);
+
+  const [snack, setSnack] = React.useState({
+    open: false,
+    severity: "success",
+    message: ""
+  });
+
+  const handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnack({ ...snack, open: false });
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   const validateInputs = () => {
     const email = document.getElementById('email');
@@ -105,19 +135,78 @@ export default function SignUp(props) {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError) {
+  const handleSubmit = async (event) => {
       event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+      if (!validateInputs()) return;
+
+      try {
+          await axios.post(
+          "http://localhost:5000/api/auth/register",
+      {
+        fullname,
+        email,
+        password,
+      }, { withCredentials: true }
+    );
+
+      setSnack({
+        open: true,
+        severity: "success",
+        message: "Register Successed",
+      });
+
+      setTimeout(() => {
+        navigate("/signin");
+      }, 1200);
+
+  } catch (err) {
+      setSnack({
+        open: true,
+        severity: "error",
+        message: err.response?.data?.message || "Register failed"
+      });
+  }
   };
+
+const googleLogin = useGoogleLogin({
+  onSuccess: async (tokenResponse) => {
+    try {
+      const res = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`
+          }
+        }
+      );
+
+      await axios.post(
+        "http://localhost:5000/api/auth/google-auth",
+        {
+          email: res.data.email,
+          name: res.data.name,
+        },
+        { withCredentials: true }
+      );
+
+      setSnack({
+        open: true,
+        severity: "success",
+        message: "Google Sign up success",
+      });
+      
+      setTimeout(() => navigate("/"), 1000);
+
+    } catch (err) {
+      setSnack({
+        open: true,
+        severity: "error",
+        message: "Google Sign up failed"
+      });
+    }
+  }
+});
 
   return (
     <AppTheme {...props}>
@@ -146,7 +235,9 @@ export default function SignUp(props) {
                 required
                 fullWidth
                 id="name"
-                placeholder="Jon Snow"
+                placeholder="Somchai Rakdee"
+                value={fullname}
+                onChange={(e) => setFullname(e.target.value)}
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
@@ -160,6 +251,8 @@ export default function SignUp(props) {
                 id="email"
                 placeholder="your@email.com"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 variant="outlined"
                 error={emailError}
@@ -176,6 +269,8 @@ export default function SignUp(props) {
                 placeholder="••••••"
                 type="password"
                 id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
                 variant="outlined"
                 error={passwordError}
@@ -183,10 +278,6 @@ export default function SignUp(props) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="I want to receive updates via email."
-            />
             <Button
               type="submit"
               fullWidth
@@ -203,18 +294,10 @@ export default function SignUp(props) {
             <Button
               fullWidth
               variant="outlined"
-              onClick={() => alert('Sign up with Google')}
+              onClick={() => googleLogin()}
               startIcon={<GoogleIcon />}
             >
               Sign up with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign up with Facebook')}
-              startIcon={<FacebookIcon />}
-            >
-              Sign up with Facebook
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Already have an account?{' '}
@@ -227,6 +310,30 @@ export default function SignUp(props) {
               </Link>
             </Typography>
           </Box>
+          <Snackbar
+            open={snack.open}
+            autoHideDuration={3000}
+            onClose={handleCloseSnack}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+          <Alert
+            onClose={handleCloseSnack}
+            severity={snack.severity}
+            variant="filled"
+            sx={{ 
+              width: '100%' ,
+              ...(snack.severity === "success" && {
+              bgcolor: "success.main",
+              color: "#000000" ,
+              '& .MuiAlert-icon': {
+                  color: "#030303"   // change icon color
+                }
+              })
+            }}
+          >
+            {snack.message}
+          </Alert>
+          </Snackbar>
         </Card>
       </SignUpContainer>
     </AppTheme>
