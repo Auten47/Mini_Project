@@ -193,7 +193,7 @@ const googleLogin = useGoogleLogin({
       setSnack({
         open: true,
         severity: "success",
-        message: "Google Sign up success 👋",
+        message: "Google Sign up success",
       });
       
       setTimeout(() => navigate("/"), 1000);

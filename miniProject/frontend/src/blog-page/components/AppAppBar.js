@@ -19,7 +19,6 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 
-
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -37,13 +36,13 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 export default function AppAppBar() {
+  const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
   const location = useLocation();
-  const [openDrawer, setOpenDrawer] = React.useState(false);
-  
+
 
 React.useEffect(() => {
   axios
@@ -85,7 +84,7 @@ const handleLogout = async () => {
   };
 
   const toggleDrawer = (newOpen) => () => {
-    setOpenDrawer(newOpen);
+    setOpen(newOpen);
   };
 
   return (
@@ -152,18 +151,7 @@ const handleLogout = async () => {
               </>
           ) : (
             <>
-              <IconButton 
-              onClick={handleMenu}
-              sx={{
-                    border: "none",
-                    background: "none",
-                    boxShadow: "none",
-                    padding: 0,
-                    "&:hover": {
-                    background: "none"
-                    }
-              }}
-              >
+              <IconButton onClick={handleMenu}>
                 <Avatar {...stringAvatar(user.name || user.fullname)} />
               </IconButton>
 
@@ -186,7 +174,7 @@ const handleLogout = async () => {
             </IconButton>
             <Drawer
               anchor="top"
-              open={openDrawer}
+              open={open}
               onClose={toggleDrawer(false)}
               PaperProps={{
                 sx: {
