@@ -16,28 +16,33 @@ router.post("/google-auth", (req, res) => {
             db.query(
             "INSERT INTO users (fullname, email) VALUES (?, ?)",
             [name, email],
-            (err2) => {
+            (err2, insertResult) => {
                 if(err2) return res.status(500).json(err2);
-                createSession(req, res, email, name);
+
+                const userId = insertResult.insertId;
+
+                createSession(req, res, userId, email, name);
             }
         );
       } else{
-        createSession(req, res, email, name);
+        const userId = result[0].id;
+
+        createSession(req, res, userId, email, name);
       }
     }
   );
 });
 
-function createSession(req, res, email, name){
-    req.session.user = {
-        email,
-        fullname: name,
-    };
+function createSession(req, res, id, email, name) {
+  req.session.user = {
+    id: id,             
+    email,
+    fullname: name,
+  };
 
-    res.json({
-        message: "Google auth success",
-        user: req.session.user,
-    })
+  res.json({
+    message: "Google auth success",
+    user: req.session.user,
+  });
 }
-
 module.exports = router;
