@@ -1,492 +1,405 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Chip from '@mui/material/Chip';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import { styled } from '@mui/material/styles';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+  import * as React from 'react';
+  import Avatar from '@mui/material/Avatar';
+  import Box from '@mui/material/Box';
+  import Card from '@mui/material/Card';
+  import CardContent from '@mui/material/CardContent';
+  import CardMedia from '@mui/material/CardMedia';
+  import Chip from '@mui/material/Chip';
+  import Grid from '@mui/material/Grid';
+  import IconButton from '@mui/material/IconButton';
+  import Typography from '@mui/material/Typography';
+  import FormControl from '@mui/material/FormControl';
+  import InputAdornment from '@mui/material/InputAdornment';
+  import OutlinedInput from '@mui/material/OutlinedInput';
+  import { styled } from '@mui/material/styles';
+  import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+  import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+  import axios from "axios";
+  import AddIcon from "@mui/icons-material/Add";
+  import Fab from '@mui/material/Fab';
+  import CreatePostDialog from './create_post';
+  import { useLocation } from "react-router-dom";
+  import PostDetailDialog from "./PostDetailDialog";
+  import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+  import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+  import Pagination from "@mui/material/Pagination";
 
-const cardData = [
-  {
-    img: 'https://picsum.photos/800/450?random=1',
-    tag: 'Engineering',
-    title: 'Revolutionizing software development with cutting-edge tools',
-    description:
-      'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=2',
-    tag: 'Product',
-    title: 'Innovative product features that drive success',
-    description:
-      'Explore the key features of our latest product release that are helping businesses achieve their goals. From user-friendly interfaces to robust functionality, learn why our product stands out.',
-    authors: [{ name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=3',
-    tag: 'Design',
-    title: 'Designing for the future: trends and insights',
-    description:
-      'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=4',
-    tag: 'Company',
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=45',
-    tag: 'Engineering',
-    title: 'Pioneering sustainable engineering solutions',
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=6',
-    tag: 'Product',
-    title: 'Maximizing efficiency with our latest product updates',
-    description:
-      'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
-];
 
-const StyledCard = styled(Card)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  padding: 0,
-  height: '100%',
-  backgroundColor: (theme.vars || theme).palette.background.paper,
-  '&:hover': {
-    backgroundColor: 'transparent',
-    cursor: 'pointer',
-  },
-  '&:focus-visible': {
-    outline: '3px solid',
-    outlineColor: 'hsla(210, 98%, 48%, 0.5)',
-    outlineOffset: '2px',
-  },
-}));
+  const stringAvatar = (name) => ({
+      children: name ? name[0].toUpperCase() : "?",
+    });
 
-const StyledCardContent = styled(CardContent)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 4,
-  padding: 16,
-  flexGrow: 1,
-  '&:last-child': {
-    paddingBottom: 16,
-  },
-});
+  const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("th-TH", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    };
+  const StyledCard = styled(Card)(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    padding: 0,
+    height: '100%',
+    backgroundColor: (theme.vars || theme).palette.background.paper,
+    '&:hover': {
+      backgroundColor: 'transparent',
+      cursor: 'pointer',
+    },
+    '&:focus-visible': {
+      outline: '3px solid',
+      outlineColor: 'hsla(210, 98%, 48%, 0.5)',
+      outlineOffset: '2px',
+    },
+  }));
 
-const StyledTypography = styled(Typography)({
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 2,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
+  const StyledCardContent = styled(CardContent)({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    padding: 16,
+    flexGrow: 1,
+    '&:last-child': {
+      paddingBottom: 16,
+    },
+  });
 
-function Author({ authors }) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 2,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '16px',
-      }}
-    >
-      <Box
-        sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
-      >
-        <AvatarGroup max={3}>
-          {authors.map((author, index) => (
-            <Avatar
-              key={index}
-              alt={author.name}
-              src={author.avatar}
-              sx={{ width: 24, height: 24 }}
-            />
-          ))}
-        </AvatarGroup>
-        <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
-        </Typography>
-      </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
-    </Box>
-  );
-}
+  const StyledTypography = styled(Typography)({
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 2,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  });
 
-Author.propTypes = {
-  authors: PropTypes.arrayOf(
-    PropTypes.shape({
-      avatar: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-};
-
-export function Search() {
-  return (
-    <FormControl sx={{ width: { xs: '100%', md: '25ch' } }} variant="outlined">
-      <OutlinedInput
-        size="small"
-        id="search"
-        placeholder="Search…"
-        sx={{ flexGrow: 1 }}
-        startAdornment={
-          <InputAdornment position="start" sx={{ color: 'text.primary' }}>
-            <SearchRoundedIcon fontSize="small" />
-          </InputAdornment>
-        }
-        inputProps={{
-          'aria-label': 'search',
-        }}
-      />
-    </FormControl>
-  );
-}
-
-export default function MainContent() {
-  const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
-
-  const handleFocus = (index) => {
-    setFocusedCardIndex(index);
-  };
-
-  const handleBlur = () => {
-    setFocusedCardIndex(null);
-  };
-
-  const handleClick = () => {
-    console.info('You clicked the filter chip.');
-  };
-
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <div>
-        <Typography variant="h1" gutterBottom>
-          Blog
-        </Typography>
-        <Typography>Stay in the loop with the latest about our products</Typography>
-      </div>
-      <Box
-        sx={{
-          display: { xs: 'flex', sm: 'none' },
-          flexDirection: 'row',
-          gap: 1,
-          width: { xs: '100%', md: 'fit-content' },
-          overflow: 'auto',
-        }}
-      >
-        <Search />
-        <IconButton size="small" aria-label="RSS feed">
-          <RssFeedRoundedIcon />
-        </IconButton>
-      </Box>
+  function Author({ fullname, createdAt }) {
+    return (
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column-reverse', md: 'row' },
-          width: '100%',
+          flexDirection: 'row',
+          gap: 2,
+          alignItems: 'center',
           justifyContent: 'space-between',
-          alignItems: { xs: 'start', md: 'center' },
-          gap: 4,
-          overflow: 'auto',
+          padding: '16px',
         }}
       >
         <Box
-          sx={{
-            display: 'inline-flex',
-            flexDirection: 'row',
-            gap: 3,
-            overflow: 'auto',
-          }}
+          sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
         >
-          <Chip onClick={handleClick} size="medium" label="All categories" />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Company"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Product"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Design"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="Engineering"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
+          <Avatar {...stringAvatar(fullname)} />
+          <Typography variant="caption">
+            {fullname}
+          </Typography>
         </Box>
+        <Typography variant="caption">{formatDate(createdAt)}</Typography>
+      </Box>
+    );
+  }
+
+  export function Search({value, onChange}) {
+    return (
+      <FormControl sx={{ width: { xs: '100%', md: '25ch' } }} variant="outlined">
+        <OutlinedInput
+          size="small"
+          id="search"
+          placeholder="Search…"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          sx={{ flexGrow: 1 }}
+          startAdornment={
+            <InputAdornment position="start" sx={{ color: 'text.primary' }}>
+              <SearchRoundedIcon fontSize="small" />
+            </InputAdornment>
+          }
+          inputProps={{
+            'aria-label': 'search',
+          }}
+        />
+      </FormControl>
+    );
+  }
+
+  export default function MainContent() {
+    const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
+    const [posts, setPosts] = React.useState([]);
+    const [openPostDialog, setOpenPostDialog] = React.useState(false);
+    const [user, setUser] = React.useState(null);
+    const location = useLocation();
+    const [selectedPost, setSelectedPost] = React.useState(null);
+    const [openDetail, setOpenDetail] = React.useState(false);
+    const [page, setPage] = React.useState(1);
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const [selectedCategory, setSelectedCategory] = React.useState("All");
+    const postsPerPage = 6;
+
+    const filteredPosts = posts.filter((post) =>{
+      const matchSearch =
+        post.title.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchCategory =
+        selectedCategory === "All" || post.tag === selectedCategory;
+
+      return matchSearch && matchCategory;
+    });
+
+    const indexOfLastPost = page * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+
+    const currentPosts = filteredPosts.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/posts/allposts",
+          { withCredentials: true }
+        );
+        setPosts(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    React.useEffect(() => {
+      setPage(1);
+    }, [searchTerm, selectedCategory]);
+
+    React.useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/auth/me", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch(() => {
+        setUser(null);
+      });
+      fetchPosts();
+    }, [location]);
+
+    const handleFocus = (index) => {
+      setFocusedCardIndex(index);
+    };
+
+    const handleBlur = () => {
+      setFocusedCardIndex(null);
+    };
+
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div>
+          <Typography variant="h1" gutterBottom>
+            Blog
+          </Typography>
+          <Typography>Stay in the loop with the latest about our products</Typography>
+        </div>
+        {user && (
+          <Fab
+          aria-label='add'
+          sx={{
+              backgroundColor: "rgba(120,120,120,0.25)",
+              backdropFilter: "blur(10px)",
+              color: 'white',
+              position: 'fixed',
+              bottom: 24,
+              right: 24,
+              "&:hover": {
+                backgroundColor: "rgba(120,120,120,0.4)"
+              }
+              }}
+                onClick={() => setOpenPostDialog(true)}
+          >
+            <AddIcon /> 
+          </Fab>
+        )}
+        <CreatePostDialog
+          open={openPostDialog}
+          onClose={() => setOpenPostDialog(false)}
+          onPostCreated={fetchPosts}
+        />
         <Box
           sx={{
-            display: { xs: 'none', sm: 'flex' },
+            display: { xs: 'flex', sm: 'none' },
             flexDirection: 'row',
             gap: 1,
             width: { xs: '100%', md: 'fit-content' },
             overflow: 'auto',
           }}
         >
-          <Search />
+          <Search value={searchTerm} onChange={setSearchTerm}/>
           <IconButton size="small" aria-label="RSS feed">
             <RssFeedRoundedIcon />
           </IconButton>
         </Box>
-      </Box>
-      <Grid container spacing={2} columns={12}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(0)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[0].img}
-              sx={{
-                aspectRatio: '16 / 9',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[0].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[0].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[0].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[0].authors} />
-          </StyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(1)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 1 ? 'Mui-focused' : ''}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[1].img}
-              aspect-ratio="16 / 9"
-              sx={{
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[1].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[1].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[1].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[1].authors} />
-          </StyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(2)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[2].img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[2].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[2].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[2].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[2].authors} />
-          </StyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column-reverse', md: 'row' },
+            width: '100%',
+            justifyContent: 'space-between',
+            alignItems: { xs: 'start', md: 'center' },
+            gap: 4,
+            overflow: 'auto',
+          }}
+        >
           <Box
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}
+            sx={{
+              display: 'inline-flex',
+              flexDirection: 'row',
+              gap: 3,
+              overflow: 'initial',
+            }}
           >
-            <StyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(3)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <StyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[3].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[3].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[3].description}
-                  </StyledTypography>
-                </div>
-              </StyledCardContent>
-              <Author authors={cardData[3].authors} />
-            </StyledCard>
-            <StyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(4)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <StyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[4].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[4].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[4].description}
-                  </StyledTypography>
-                </div>
-              </StyledCardContent>
-              <Author authors={cardData[4].authors} />
-            </StyledCard>
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(5)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[5].img}
+            <Chip 
+            onClick={() => setSelectedCategory("All")} 
+            color={selectedCategory === "All" ? "primary" : "default"}
+            size="medium" 
+            label="All categories" 
+            />
+
+            <Chip
+              onClick={() => setSelectedCategory("Engineer")}
+              color={selectedCategory === "Engineer" ? "primary" : "default"}
+              size="medium"
+              label="Engineer"
               sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
+                backgroundColor: 'transparent',
+                border: 'none',
               }}
             />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[5].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[5].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[5].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[5].authors} />
-          </StyledCard>
+            <Chip
+              onClick={() => setSelectedCategory("Dialy Life")}
+              color={selectedCategory === "Dialy Life" ? "primary" : "default"}
+              size="medium"
+              label="Dialy Life"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
+            <Chip
+              onClick={() => setSelectedCategory("Travel")}
+              color={selectedCategory === "Travel" ? "primary" : "default"}
+              size="medium"
+              label="Travel"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
+            <Chip
+              onClick={() => setSelectedCategory("Music")}
+              color={selectedCategory === "Music" ? "primary" : "default"}
+              size="medium"
+              label="Music"
+              sx={{
+                backgroundColor: 'transparent',
+                border: 'none',
+              }}
+            />
+          </Box>
+          <Box
+          sx={{
+            display: { xs: 'none', sm: 'flex' },
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            width: "100%",
+            flexWrap: "wrap", 
+          }}
+          >
+          {/* left: Search */}
+          <Box sx={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: 1,
+            ml: -1,
+            }}>
+            <Search value={searchTerm} onChange={setSearchTerm}/>
+              <IconButton size="small" aria-label="RSS feed">
+                <RssFeedRoundedIcon />
+              </IconButton>
+          </Box>
+
+          {/* right: Pagination */}
+          <Pagination
+            sx={{ ml: "auto" }}
+            count={Math.ceil(filteredPosts.length / postsPerPage)}
+            page={page}
+            onChange={(e, value) => setPage(value)}
+            color="primary"
+          />
+          </Box>
+        </Box>
+        
+        <Grid container spacing={2} columns={12}>
+          {currentPosts.map((post, index) => (
+          <Grid key={post.id} size={{ xs: 12, md: 6 }}>
+            <StyledCard
+              variant="outlined"
+              onFocus={() => handleFocus(0)}
+              onBlur={handleBlur}
+              tabIndex={0}
+              className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
+              onClick={() => {
+                setSelectedPost(post);
+                setOpenDetail(true);
+              }}
+            >
+              <CardMedia
+                component="img"
+                image={`http://localhost:5000${post.image}`}
+                sx={{
+                  aspectRatio: '16 / 9',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                }}
+              />
+              <StyledCardContent>
+                <Typography gutterBottom variant="caption" component="div">
+                  {post.tag}
+                </Typography>
+                <Typography gutterBottom variant="h6" component="div">
+                  {post.title}
+                </Typography>
+                <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                  {post.description}
+                </StyledTypography>
+                <Box sx={{ display: "flex", gap: 2, alignItems: "center", mt: 1 }}>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <FavoriteBorderIcon fontSize="small" />
+                <Typography variant="body2">{post.like_count}</Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <ChatBubbleOutlineIcon fontSize="small" />
+                <Typography variant="body2">{post.comment_count}</Typography>
+                </Box>
+
+              </Box>
+              </StyledCardContent>
+              <Author 
+                fullname={post.fullname}
+                createdAt={post.created_at}
+              />
+            </StyledCard>
+          </Grid>
+          ))}
         </Grid>
-      </Grid>
-    </Box>
-  );
-}
+        <PostDetailDialog
+          open={openDetail}
+          onClose={() => setOpenDetail(false)}
+          post={selectedPost}
+          user={user}
+          onUpdated={fetchPosts}
+        />
+      </Box>
+      
+    );
+  }
