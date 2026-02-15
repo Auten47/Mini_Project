@@ -1,10 +1,19 @@
 import SvgIcon from '@mui/material/SvgIcon';
+import { useColorScheme } from '@mui/material/styles';
 
 export function SitemarkIcon() {
+  const { mode, systemMode } = useColorScheme();
+  const resolvedMode = systemMode || mode;
+
+  const logoSrc =
+    resolvedMode === 'dark'
+      ? '/Boxbox-light.svg'
+      : '/Boxbox-dark.svg';
+
   return (
-    <img 
-      src="/Boxbox-dark.svg" 
-      alt="Sitemark" 
+    <img
+      src={logoSrc}
+      alt="Sitemark"
       style={{ height: 40 }}
     />
   );

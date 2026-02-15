@@ -196,7 +196,7 @@
           <Typography variant="h1" gutterBottom>
             Blog
           </Typography>
-          <Typography>Stay in the loop with the latest about our products</Typography>
+          <Typography>Stay in the loop with the latest about our projects</Typography>
         </div>
         {user && (
           <Fab
