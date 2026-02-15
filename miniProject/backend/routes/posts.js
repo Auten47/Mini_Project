@@ -108,4 +108,22 @@ router.put("/:id", upload.single("image"),(req, res) => {
   });
 });
 
+router.get("/myposts", (req, res) => {
+
+  if (!req.session.user) {
+    return res.status(401).json({ message: "Not logged in" });
+  }
+
+  const userId = req.session.user.id;
+
+  db.query(
+    "SELECT * FROM posts WHERE user_id = ? ORDER BY id DESC",
+    [userId],
+    (err, results) => {
+      if (err) return res.status(500).json(err);
+      res.json(results);
+    }
+  );
+});
+
 module.exports = router;

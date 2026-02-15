@@ -18,7 +18,12 @@ import Menu from '@mui/material/Menu';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import Typography from '@mui/material/Typography';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -43,7 +48,8 @@ export default function AppAppBar() {
   const openMenu = Boolean(anchorEl);
   const location = useLocation();
   const [openDrawer, setOpenDrawer] = React.useState(false);
-  
+  const [openProfile, setOpenProfile] = React.useState(false);
+  const [userPosts, setUserPosts] = React.useState([]);
 
 React.useEffect(() => {
   axios
@@ -57,6 +63,7 @@ React.useEffect(() => {
       setUser(null);
     });
 }, [location]);
+
 
 
 const handleLogout = async () => {
@@ -74,6 +81,7 @@ const handleLogout = async () => {
       setAnchorEl(even.currentTarget);
   };
 
+  
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
@@ -87,6 +95,20 @@ const handleLogout = async () => {
   const toggleDrawer = (newOpen) => () => {
     setOpenDrawer(newOpen);
   };
+
+  const handleOpenProfile = async () => {
+    setOpenProfile(true);
+
+  try {
+    const res = await axios.get(
+      "http://localhost:5000/api/posts/myposts",
+      { withCredentials: true }
+    );
+    setUserPosts(res.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <AppBar
@@ -176,6 +198,7 @@ const handleLogout = async () => {
                 onClose={handleCloseMenu}
               >
                 <MenuItem disabled>{user.email}</MenuItem>
+                <MenuItem onClick={handleOpenProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
@@ -267,6 +290,50 @@ const handleLogout = async () => {
           </Box>
         </StyledToolbar>
       </Container>
+      <Dialog open={openProfile} onClose={() => setOpenProfile(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Profile</DialogTitle>
+
+        <DialogContent>
+
+         {/* Avatar + Name */}   
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Avatar
+            {...stringAvatar(user?.name || user?.fullname)}
+            sx={{ width: 64, height: 64, mr: 2 }}
+        />
+          <Box>
+            <Typography variant="h6" sx={{ mb: 0.2 }}>
+              {user?.fullname || user?.name}
+            </Typography>
+            
+            <Typography variant="body2" color="text.secondary" sx={{ opacity: 0.6} }>
+              {user?.email}
+            </Typography>
+            </Box>
+
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            {/* Image Grid */}
+              <ImageList cols={3} gap={8}>
+                {userPosts.map((post) => (
+              <ImageListItem key={post.id}>
+            <img
+              src={`http://localhost:5000${post.image}`}
+              alt=""
+              loading="lazy"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "8px"
+              }}
+            />
+            </ImageListItem>
+            ))}
+          </ImageList>
+
+    </DialogContent>
+    </Dialog>
     </AppBar>
   );
 }
