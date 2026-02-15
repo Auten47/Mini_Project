@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 15, 2026 at 12:44 AM
+-- Generation Time: Feb 15, 2026 at 02:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -40,11 +40,9 @@ CREATE TABLE `comments` (
 --
 
 INSERT INTO `comments` (`id`, `post_id`, `user_id`, `comment_text`, `created_at`) VALUES
-(4, 3, 1, 'What ?', '2026-02-14 22:07:34'),
-(5, 3, 1, 'sdfsdf', '2026-02-14 22:08:14'),
-(7, 2, 1, 'Welcome', '2026-02-14 22:49:19'),
-(9, 4, 1, 'Hi', '2026-02-14 23:15:02'),
-(13, 6, 3, 'luv luv 😍', '2026-02-14 23:38:08');
+(13, 6, 3, 'luv luv 😍', '2026-02-14 23:38:08'),
+(14, 7, 1, 'Wowww', '2026-02-15 07:54:56'),
+(15, 10, 3, 'Wowwww', '2026-02-15 10:13:25');
 
 -- --------------------------------------------------------
 
@@ -64,14 +62,17 @@ CREATE TABLE `likes` (
 --
 
 INSERT INTO `likes` (`id`, `post_id`, `user_id`, `created_at`) VALUES
-(3, 4, 2, '2026-02-14 22:47:16'),
-(4, 4, 3, '2026-02-14 22:48:05'),
-(5, 2, 1, '2026-02-14 23:06:18'),
-(7, 4, 1, '2026-02-14 23:14:28'),
-(9, 3, 1, '2026-02-14 23:20:48'),
-(10, 5, 1, '2026-02-14 23:26:20'),
 (11, 6, 2, '2026-02-14 23:37:19'),
-(12, 6, 3, '2026-02-14 23:38:03');
+(12, 6, 3, '2026-02-14 23:38:03'),
+(13, 6, 1, '2026-02-15 05:27:07'),
+(14, 7, 3, '2026-02-15 05:56:27'),
+(16, 7, 1, '2026-02-15 07:55:05'),
+(17, 9, 2, '2026-02-15 08:04:24'),
+(18, 8, 2, '2026-02-15 08:04:26'),
+(19, 10, 2, '2026-02-15 08:20:38'),
+(20, 10, 3, '2026-02-15 10:13:15'),
+(21, 9, 3, '2026-02-15 10:13:33'),
+(22, 13, 3, '2026-02-15 10:16:11');
 
 -- --------------------------------------------------------
 
@@ -94,12 +95,14 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `title`, `description`, `image`, `tag`, `user_id`, `created_at`) VALUES
-(1, 'test', 'test', '/uploads/1771090834550FilmCam_K Funs_20260126_012714844.jpg', 'Dialy Life', 1, '2026-02-14 17:40:34'),
-(2, 'Test23423', 'sdfsdfsdf', '/uploads/1771092537088IMG_20260126_223649.jpg', 'Dialy Life', 3, '2026-02-14 18:08:57'),
-(3, 'Music in life', 'I love music', '/uploads/1771096063674à¹à¸à¸µà¸¢à¸à¹.....png', 'Music', 1, '2026-02-14 19:07:43'),
-(4, 'Computer Engineer in 2026', 'How you think about cpe in 2026?', '/uploads/177109631039813304.jpg', 'Engineer', 1, '2026-02-14 19:11:50'),
-(5, 'Travel in bankok', 'I like ......', '/uploads/1771097602931FilmCam_Inst M_20260124_001116246.jpg', 'Travel', 1, '2026-02-14 19:33:23'),
-(6, 'Pictures from the past 🫰', 'Classmates from Kannasootsuksalai School, Class 120, Chinese Language Arts major.\r\n', '/uploads/1771112224869IMG_5333.JPG', 'Dialy Life', 2, '2026-02-14 23:37:04');
+(6, 'Pictures from the past 🫰', 'Classmates from Kannasootsuksalai School, Class 120, Chinese Language Arts major. 2021', '/uploads/1771112224869IMG_5333.JPG', 'Dialy Life', 2, '2026-02-14 23:37:04'),
+(7, 'Picture Vol.01', 'Picture Vol.01 This is .....', '/uploads/1771134983807à¹à¸à¸µà¸¢à¸à¹.....png', 'Music', 3, '2026-02-15 05:56:23'),
+(8, 'Street Art #Nonthaburi', 'Location: yeaktiwanon 📸', '/uploads/1771142257545IMG_20260123_215738.jpg', 'Travel', 1, '2026-02-15 07:57:37'),
+(9, 'Street Arts #Nonthaburi', 'Location: yeaktiwanon', '/uploads/1771142458362FilmCam_FC 100_20260124_000848550.jpg', 'Travel', 1, '2026-02-15 08:00:58'),
+(10, 'Yellow Moodddddd', 'i\'m fine.', '/uploads/1771142721451FilmCam_FNC_20260124_000900137.jpg', 'Dialy Life', 2, '2026-02-15 08:05:21'),
+(11, 'How do you think about computer engineering?', 'in 2026', '/uploads/1771145972939pexels-davideibiza-1739748.jpg', 'Engineer', 2, '2026-02-15 08:59:32'),
+(12, 'Black mood / Coffee Cafe', 'I like this coffee.', '/uploads/1771146085951pexels-kevinmenajang-982612.jpg', 'Dialy Life', 3, '2026-02-15 09:01:25'),
+(13, 'Thailand 2026', 'Hello, Thailand 2026', '/uploads/1771150610061IMG_20260123_215829.jpg', 'Dialy Life', 3, '2026-02-15 10:16:01');
 
 -- --------------------------------------------------------
 
@@ -166,19 +169,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `users`
