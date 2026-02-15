@@ -13,6 +13,8 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
 import SitemarkIcon from './SitemarkIcon';
+import InstragramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
 
 function Copyright() {
   return (
@@ -58,7 +60,7 @@ export default function Footer() {
             }}
           >
             <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-              <SitemarkIcon />
+                  <SitemarkIcon style={{ height: 80 }} />
               <Typography
                 variant="body2"
                 gutterBottom
@@ -106,24 +108,23 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Product
+              My Teams
             </Typography>
-            <Link color="text.secondary" variant="body2" href="#">
-              Features
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Testimonials
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Highlights
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Pricing
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              FAQs
-            </Link>
+            
+            <Typography color="text.secondary" variant="body2" mt={2}> 
+              nattachai wongsrimueng
+            </Typography>
+            <Typography color="text.secondary" variant="body2" mt={2}>
+              kittituch lamo
+            </Typography>
+            <Typography color="text.secondary" variant="body2" mt={2}>
+              Authen Chungthaisong
+            </Typography>
+            <Typography color="text.secondary" variant="body2" mt={2}>
+              Bunyanut Wanna 
+            </Typography>
           </Box>
+
           <Box
             sx={{
               display: { xs: 'none', sm: 'flex' },
@@ -132,17 +133,143 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Company
+              Conetct Us
             </Typography>
-            <Link color="text.secondary" variant="body2" href="#">
-              About us
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Careers
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Press
-            </Link>
+               
+          {/* Nattachai Wongsrimueng */}
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            sx={{ justifyContent: 'left', color: 'text.secondary' }}
+          >
+            <IconButton
+              size="small"
+              href="https://github.com/Nattachai-devlow"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <GitHubIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href=""
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href="https://www.instagram.com/g4me.underscore/"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <InstragramIcon />
+            </IconButton>
+          </Stack>
+
+            {/* kittituch lamo */}
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            sx={{ justifyContent: 'left', color: 'text.secondary' }}
+          >
+            <IconButton
+              size="small"
+              href="https://github.com/teeny0"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <GitHubIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href=""
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href="https://www.instagram.com/tak_kittituch/"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <InstragramIcon />
+            </IconButton>
+          </Stack>
+
+            {/* Authen Chungthaisong */}
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            sx={{ justifyContent: 'left', color: 'text.secondary' }}
+          >
+            <IconButton
+              size="small"
+              href="https://github.com/Auten47"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <GitHubIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href="https://www.facebook.com/maser.tan.98"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href="https://www.instagram.com/ms_tenx47/"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <InstragramIcon />
+            </IconButton>
+          </Stack>
+
+              {/* Bunyanut Wanna */}
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            sx={{ justifyContent: 'left', color: 'text.secondary' }}
+          >
+            <IconButton
+              size="small"
+              href="https://github.com/mui"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <GitHubIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href="https://x.com/MaterialUI"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              href="https://www.instagram.com/bunyanut_37/"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <InstragramIcon />
+            </IconButton>
+          </Stack>
+
+
+
           </Box>
           <Box
             sx={{
@@ -151,18 +278,7 @@ export default function Footer() {
               gap: 1,
             }}
           >
-            <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Legal
-            </Typography>
-            <Link color="text.secondary" variant="body2" href="#">
-              Terms
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Privacy
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Contact
-            </Link>
+            
           </Box>
         </Box>
         <Box
@@ -187,40 +303,6 @@ export default function Footer() {
             </Link>
             <Copyright />
           </div>
-          <Stack
-            direction="row"
-            spacing={1}
-            useFlexGap
-            sx={{ justifyContent: 'left', color: 'text.secondary' }}
-          >
-            <IconButton
-              color="inherit"
-              size="small"
-              href="https://github.com/mui"
-              aria-label="GitHub"
-              sx={{ alignSelf: 'center' }}
-            >
-              <GitHubIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              size="small"
-              href="https://x.com/MaterialUI"
-              aria-label="X"
-              sx={{ alignSelf: 'center' }}
-            >
-              <TwitterIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              size="small"
-              href="https://www.linkedin.com/company/mui/"
-              aria-label="LinkedIn"
-              sx={{ alignSelf: 'center' }}
-            >
-              <LinkedInIcon />
-            </IconButton>
-          </Stack>
         </Box>
       </Container>
     </React.Fragment>
