@@ -332,9 +332,6 @@
             ml: -1,
             }}>
             <Search value={searchTerm} onChange={setSearchTerm}/>
-              <IconButton size="small" aria-label="RSS feed">
-                <RssFeedRoundedIcon />
-              </IconButton>
           </Box>
 
           {/* right: Pagination */}
