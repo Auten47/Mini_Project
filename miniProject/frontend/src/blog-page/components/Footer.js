@@ -5,27 +5,26 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
-import Link from '@mui/material/Link';
+// import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import SitemarkIcon from './SitemarkIcon';
 import InstragramIcon from '@mui/icons-material/Instagram';
-import FacebookIcon from '@mui/icons-material/Facebook';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-      {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
-        Sitemark
-      </Link>
-      &nbsp;
-      {new Date().getFullYear()}
-    </Typography>
-  );
-}
+// function Copyright() {
+//   return (
+//     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+//       {'Copyright © '}
+//       <Link color="text.secondary" href="https://mui.com/">
+//         Sitemark
+//       </Link>
+//       &nbsp;
+//       {new Date().getFullYear()}
+//     </Typography>
+//   );
+// }
 
 export default function Footer() {
   return (
@@ -149,14 +148,7 @@ export default function Footer() {
             >
               <GitHubIcon />
             </IconButton>
-            <IconButton
-              size="small"
-              href=""
-              target="_blank"
-              sx={{ alignSelf: 'center' }}
-            >
-              <FacebookIcon />
-            </IconButton>
+
             <IconButton
               size="small"
               href="https://www.instagram.com/g4me.underscore/"
@@ -182,14 +174,7 @@ export default function Footer() {
             >
               <GitHubIcon />
             </IconButton>
-            <IconButton
-              size="small"
-              href=""
-              target="_blank"
-              sx={{ alignSelf: 'center' }}
-            >
-              <FacebookIcon />
-            </IconButton>
+           
             <IconButton
               size="small"
               href="https://www.instagram.com/tak_kittituch/"
@@ -215,14 +200,7 @@ export default function Footer() {
             >
               <GitHubIcon />
             </IconButton>
-            <IconButton
-              size="small"
-              href="https://www.facebook.com/maser.tan.98"
-              target="_blank"
-              sx={{ alignSelf: 'center' }}
-            >
-              <FacebookIcon />
-            </IconButton>
+          
             <IconButton
               size="small"
               href="https://www.instagram.com/ms_tenx47/"
@@ -248,14 +226,7 @@ export default function Footer() {
             >
               <GitHubIcon />
             </IconButton>
-            <IconButton
-              size="small"
-              href="https://x.com/MaterialUI"
-              target="_blank"
-              sx={{ alignSelf: 'center' }}
-            >
-              <FacebookIcon />
-            </IconButton>
+          
             <IconButton
               size="small"
               href="https://www.instagram.com/bunyanut_37/"
@@ -289,7 +260,7 @@ export default function Footer() {
             borderColor: 'divider',
           }}
         >
-          <div>
+          {/* <div>
             <Link color="text.secondary" variant="body2" href="#">
               Privacy Policy
             </Link>
@@ -300,7 +271,7 @@ export default function Footer() {
               Terms of Service
             </Link>
             <Copyright />
-          </div>
+          </div> */}
         </Box>
       </Container>
     </React.Fragment>
