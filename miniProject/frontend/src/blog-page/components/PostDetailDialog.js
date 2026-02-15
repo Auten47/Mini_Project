@@ -42,7 +42,8 @@ export default function PostDetailDialog({
   const [newImage, setNewImage] = React.useState(null);
   const [openImageView, setOpenImageView] = React.useState(false);
 
-  const openMenu = Boolean(anchorEl)
+  const openMenu = Boolean(anchorEl);
+  
   
     React.useEffect(() => {
     if (post) {

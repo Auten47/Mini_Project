@@ -67,6 +67,8 @@ React.useEffect(() => {
     });
 }, [location]);
 
+
+
 const handleOpenDetail = (post) => {
   setSelectedPost(post);
   setOpenDetail(true);
@@ -304,7 +306,7 @@ const handleLogout = async () => {
         {/* ===== PROFILE HEADER ===== */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
 
-        {/* Avatar ใหญ่ */}
+        {/* Big Avatar */}
         <Avatar
           {...stringAvatar(user?.name || user?.fullname)}
           sx={{ width: 80, height: 80, mr: 3 }}
@@ -321,7 +323,7 @@ const handleLogout = async () => {
           </Typography>
         </Box>
 
-        {/* จำนวนโพสต์ (ขวาสุด) */}
+        {/* posts count */}
         <Box sx={{ textAlign: "right" }}>
           <Typography variant="h6">
             {userPosts.length}
@@ -339,11 +341,10 @@ const handleLogout = async () => {
           {userPosts.map((post) => (
         <ImageListItem key={post.id} >
       
-        {/* 🔥 กล่องบังคับให้เป็นสี่เหลี่ยม */}
         <div
           style={{
             width: "100%",
-            aspectRatio: "1 / 1", // ⭐ ทำให้เป็นช่องสี่เหลี่ยม
+            aspectRatio: "1 / 1", 
             overflow: "hidden",
             borderRadius: "8px"
           }}
@@ -355,7 +356,7 @@ const handleLogout = async () => {
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover", // ⭐ ครอปให้เต็มช่อง
+            objectFit: "cover", 
             transition: "transform 0.3s ease"
           }}
           onClick={() => handleOpenDetail(post)}
@@ -374,15 +375,19 @@ const handleLogout = async () => {
 
     </DialogContent>
     </Dialog>
-    <PostDetailDialog
-      open={openDetail}
-      onClose={() => setOpenDetail(false)}
-      post={selectedPost}
-      user={user}
-      onUpdated={() => {
-        handleOpenProfile(); // โหลดโพสต์ใหม่
-      }}
-    />
+    {selectedPost && (
+      <PostDetailDialog
+        open={openDetail}
+        onClose={() => setOpenDetail(false)}
+        post={selectedPost}
+        user={user}
+        onUpdated={() => {
+          handleOpenProfile();
+          window.dispatchEvent(new Event("postsUpdated"));
+        }}
+        
+      />
+    )}
     </AppBar>
   );
 }

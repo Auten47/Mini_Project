@@ -152,6 +152,17 @@
       indexOfLastPost
     );
 
+    React.useEffect(() => {
+      const handler = () => {
+        fetchPosts();
+      };
+
+      window.addEventListener("postsUpdated", handler);
+
+      return () => {
+        window.removeEventListener("postsUpdated", handler);
+      };
+    }, []);
     const fetchPosts = async () => {
       try {
         const res = await axios.get(
