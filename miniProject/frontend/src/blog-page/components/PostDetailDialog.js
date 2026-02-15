@@ -476,6 +476,12 @@ export default function PostDetailDialog({
           size="small"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault(); 
+              handleSendComment();
+            }
+          }}
           InputProps={{
             endAdornment: (
                 <InputAdornment position="end">

@@ -103,7 +103,7 @@ const handleLogout = async () => {
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <Sitemark />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            {/* <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button variant="text" color="info" size="small">
                 Features
               </Button>
@@ -122,7 +122,7 @@ const handleLogout = async () => {
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 Blog
               </Button>
-            </Box>
+            </Box> */}
           </Box>
           <Box
             sx={{
@@ -152,6 +152,9 @@ const handleLogout = async () => {
               </>
           ) : (
             <>
+              <Button fullWidth variant="text">
+                {user.fullname || user.name}
+              </Button>
               <IconButton 
               onClick={handleMenu}
               sx={{
@@ -172,7 +175,7 @@ const handleLogout = async () => {
                 open={openMenu}
                 onClose={handleCloseMenu}
               >
-                <MenuItem disabled>{user.name || user.fullname}</MenuItem>
+                <MenuItem disabled>{user.email}</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
@@ -205,12 +208,12 @@ const handleLogout = async () => {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem>Features</MenuItem>
+                {/* <MenuItem>Features</MenuItem>
                 <MenuItem>Testimonials</MenuItem>
                 <MenuItem>Highlights</MenuItem>
                 <MenuItem>Pricing</MenuItem>
                 <MenuItem>FAQ</MenuItem>
-                <MenuItem>Blog</MenuItem>
+                <MenuItem>Blog</MenuItem> */}
                 <Divider sx={{ my: 3 }} />
                 {!user ? (
                   <>
@@ -239,7 +242,12 @@ const handleLogout = async () => {
                   <>
                   <MenuItem>
                   <Button fullWidth variant="text">
-                    {user.name}
+                    {user.name || user.fullname}
+                  </Button>
+                  </MenuItem>
+                  <MenuItem>
+                  <Button fullWidth variant="text">
+                    {user.email}
                   </Button>
                   </MenuItem>
                   <MenuItem>
