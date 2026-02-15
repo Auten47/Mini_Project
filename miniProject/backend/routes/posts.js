@@ -90,7 +90,7 @@ router.put("/:id", upload.single("image"),(req, res) => {
     params.push(imageUrl);
   }
 
-  // 🔥 ถ้ากดลบรูป
+
   else if (deleteImage === "true") {
     query += `, image = NULL`;
   }
