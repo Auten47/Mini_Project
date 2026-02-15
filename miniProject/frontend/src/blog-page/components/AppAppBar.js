@@ -24,7 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Typography from '@mui/material/Typography';
-
+import PostDetailDialog from './PostDetailDialog';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -51,6 +51,8 @@ export default function AppAppBar() {
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [openProfile, setOpenProfile] = React.useState(false);
   const [userPosts, setUserPosts] = React.useState([]);
+  const [openDetail, setOpenDetail] = React.useState(false);
+  const [selectedPost, setSelectedPost] = React.useState(null);
 
 React.useEffect(() => {
   axios
@@ -65,7 +67,10 @@ React.useEffect(() => {
     });
 }, [location]);
 
-
+const handleOpenDetail = (post) => {
+  setSelectedPost(post);
+  setOpenDetail(true);
+};
 
 const handleLogout = async () => {
   await axios.post(
@@ -296,45 +301,88 @@ const handleLogout = async () => {
 
         <DialogContent>
 
-         {/* Avatar + Name */}   
+        {/* ===== PROFILE HEADER ===== */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <Avatar
-            {...stringAvatar(user?.name || user?.fullname)}
-            sx={{ width: 64, height: 64, mr: 2 }}
-        />
-          <Box>
-            <Typography variant="h6" sx={{ mb: 0.2 }}>
-              {user?.fullname || user?.name}
-            </Typography>
-            
-            <Typography variant="body2" color="text.secondary" sx={{ opacity: 0.6} }>
-              {user?.email}
-            </Typography>
-            </Box>
 
-            </Box>
-            <Divider sx={{ my: 2 }} />
-            {/* Image Grid */}
-              <ImageList cols={3} gap={8}>
-                {userPosts.map((post) => (
-              <ImageListItem key={post.id}>
-            <img
-              src={`http://localhost:5000${post.image}`}
-              alt=""
-              loading="lazy"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "8px"
-              }}
-            />
-            </ImageListItem>
-            ))}
-          </ImageList>
+        {/* Avatar ใหญ่ */}
+        <Avatar
+          {...stringAvatar(user?.name || user?.fullname)}
+          sx={{ width: 80, height: 80, mr: 3 }}
+        />
+
+        {/* Name + Email */}
+        <Box sx={{ flexGrow: 1 }}>
+          <Typography variant="h6">
+            {user?.fullname || user?.name}
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary">
+            {user?.email}
+          </Typography>
+        </Box>
+
+        {/* จำนวนโพสต์ (ขวาสุด) */}
+        <Box sx={{ textAlign: "right" }}>
+          <Typography variant="h6">
+            {userPosts.length}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Posts
+          </Typography>
+        </Box>
+
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+        {/* Image Grid */}
+        <ImageList cols={3} gap={10}>
+          {userPosts.map((post) => (
+        <ImageListItem key={post.id} >
+      
+        {/* 🔥 กล่องบังคับให้เป็นสี่เหลี่ยม */}
+        <div
+          style={{
+            width: "100%",
+            aspectRatio: "1 / 1", // ⭐ ทำให้เป็นช่องสี่เหลี่ยม
+            overflow: "hidden",
+            borderRadius: "8px"
+          }}
+        >
+        <img
+          src={`http://localhost:5000${post.image}`}
+          alt=""
+          loading="lazy"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover", // ⭐ ครอปให้เต็มช่อง
+            transition: "transform 0.3s ease"
+          }}
+          onClick={() => handleOpenDetail(post)}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.transform = "scale(1.12)")
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.transform = "scale(1)")
+          }
+        />
+        </div>
+
+        </ImageListItem>
+        ))}
+        </ImageList>
 
     </DialogContent>
     </Dialog>
+    <PostDetailDialog
+      open={openDetail}
+      onClose={() => setOpenDetail(false)}
+      post={selectedPost}
+      user={user}
+      onUpdated={() => {
+        handleOpenProfile(); // โหลดโพสต์ใหม่
+      }}
+    />
     </AppBar>
   );
 }
