@@ -5,6 +5,8 @@ import AppAppBar from './components/AppAppBar';
 import MainContent from './components/MainContent';
 import Footer from './components/Footer';
 
+
+
 export default function Blog(props) {
   return (
     <AppTheme {...props}>

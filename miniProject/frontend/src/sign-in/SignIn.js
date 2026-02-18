@@ -103,14 +103,14 @@ export default function SignIn(props) {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login", 
+        "https://blog-backend-9eqd.onrender.com/api/auth/login", 
       {
         email,
         password,
         
       }, { withCredentials: true });
 
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // localStorage.setItem("user", JSON.stringify(res.data.user));
 
       setSnack({
         open: true,
@@ -144,7 +144,7 @@ const googleLogin = useGoogleLogin({
       );
 
       await axios.post(
-        "http://localhost:5000/api/auth/google-auth",
+        "https://blog-backend-9eqd.onrender.com/api/auth/google-auth",
         {
           email: res.data.email,
           name: res.data.name,

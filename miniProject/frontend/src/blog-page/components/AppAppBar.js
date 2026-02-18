@@ -53,10 +53,12 @@ export default function AppAppBar() {
   const [userPosts, setUserPosts] = React.useState([]);
   const [openDetail, setOpenDetail] = React.useState(false);
   const [selectedPost, setSelectedPost] = React.useState(null);
+  const [viewUserId, setViewUserId] = React.useState(null);
+  const [openUserProfile, setOpenUserProfile] = React.useState(false);
 
 React.useEffect(() => {
   axios
-    .get("http://localhost:5000/api/auth/me", {
+    .get("https://blog-backend-9eqd.onrender.com/api/auth/me", {
       withCredentials: true,
     })
     .then((res) => {
@@ -67,16 +69,28 @@ React.useEffect(() => {
     });
 }, [location]);
 
+  const getImageUrl = (img) => {
+  if (!img) return "";
 
+  if (img.startsWith("http")) {
+    return img; // Cloudinary
+  }
+
+  return `https://blog-backend-9eqd.onrender.com${img}`; // uploads
+  };
 
 const handleOpenDetail = (post) => {
-  setSelectedPost(post);
+  setSelectedPost({
+    ...post,
+    fullname: user?.fullname || user?.name,
+    username: user?.username
+  });
   setOpenDetail(true);
 };
 
 const handleLogout = async () => {
   await axios.post(
-    "http://localhost:5000/api/auth/logout",
+    "https://blog-backend-9eqd.onrender.com/api/auth/logout",
     {},
     { withCredentials: true }
   );
@@ -94,6 +108,17 @@ const handleLogout = async () => {
     setAnchorEl(null);
   };
 
+  const handleOpenUserProfile = async (userId) => {
+  setViewUserId(userId);
+  setOpenUserProfile(true);
+
+  const res = await axios.get(
+    `https://blog-backend-9eqd.onrender.com/api/posts/user/${userId}`
+  );
+
+  setUserPosts(res.data);
+  };
+
   const stringAvatar = (name) => {
     return {
       children: name ? name[0].toUpperCase() : "?",
@@ -109,7 +134,7 @@ const handleLogout = async () => {
 
   try {
     const res = await axios.get(
-      "http://localhost:5000/api/posts/myposts",
+      "https://blog-backend-9eqd.onrender.com/api/posts/myposts",
       { withCredentials: true }
     );
     setUserPosts(res.data);
@@ -350,7 +375,7 @@ const handleLogout = async () => {
           }}
         >
         <img
-          src={`http://localhost:5000${post.image}`}
+          src={getImageUrl(post.image)}
           alt=""
           loading="lazy"
           style={{
@@ -375,6 +400,19 @@ const handleLogout = async () => {
 
     </DialogContent>
     </Dialog>
+
+    <Dialog
+      open={openUserProfile}
+      onClose={() => setOpenUserProfile(false)}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>User Profile</DialogTitle>
+      <DialogContent>
+        <Typography>User ID: {viewUserId}</Typography>
+      </DialogContent>
+    </Dialog>
+
     {selectedPost && (
       <PostDetailDialog
         open={openDetail}
@@ -385,6 +423,7 @@ const handleLogout = async () => {
           handleOpenProfile();
           window.dispatchEvent(new Event("postsUpdated"));
         }}
+        onOpenUserProfile={(userId) => handleOpenUserProfile(userId)}
         
       />
     )}

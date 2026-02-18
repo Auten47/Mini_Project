@@ -22,7 +22,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
 
 export default function PostDetailDialog({
   open,
@@ -42,14 +43,53 @@ export default function PostDetailDialog({
   const [deleteImage, setDeleteImage] = React.useState(false);
   const [newImage, setNewImage] = React.useState(null);
   const [openImageView, setOpenImageView] = React.useState(false);
-
+  const [saving, setSaving] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [showImageAlert, setShowImageAlert] = React.useState(false);
+  const [processing, setProcessing] = React.useState(false);
   const openMenu = Boolean(anchorEl);
   
+
+const resizeImage = (file) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    img.onload = () => {
+      const MAX_WIDTH = 1200;
+      const scale = MAX_WIDTH / img.width;
+
+      canvas.width = MAX_WIDTH;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => resolve(blob),
+        "image/jpeg",
+        0.8 // quality
+      );
+    };
+
+    img.src = URL.createObjectURL(file);
+  });
+};
+
+const getImageUrl = (img) => {
+  if (!img) return "";
+
+  if (img.startsWith("http")) {
+    return img; // Cloudinary
+  }
+
+  return `https://blog-backend-9eqd.onrender.com${img}`; // uploads
+};
   
     React.useEffect(() => {
     if (post) {
         axios
-        .get(`http://localhost:5000/api/comments/${post.id}`, {
+        .get(`https://blog-backend-9eqd.onrender.com/api/comments/${post.id}`, {
         withCredentials: true
     })
       .then(res => setComments(res.data))
@@ -61,7 +101,7 @@ export default function PostDetailDialog({
     React.useEffect(() => {
     if (post) {
         axios
-        .get(`http://localhost:5000/api/likes/${post.id}`, {
+        .get(`https://blog-backend-9eqd.onrender.com/api/likes/${post.id}`, {
         withCredentials: true
         })
         .then(res => {
@@ -81,7 +121,7 @@ export default function PostDetailDialog({
 
     const handleLike = async () => {
     const res = await axios.post(
-        "http://localhost:5000/api/likes/toggle",
+        "https://blog-backend-9eqd.onrender.com/api/likes/toggle",
         { post_id: post.id },
         { withCredentials: true }
     );
@@ -109,7 +149,16 @@ export default function PostDetailDialog({
 
     
 
-  const handleSaveEdit = async () => {
+const handleSaveEdit = async () => {
+  if (deleteImage && !newImage) {
+    setShowImageAlert(true);
+    return;
+  }
+
+  try {
+    setSaving(true);
+    setProcessing(false); 
+    setProgress(0);
 
     const formData = new FormData();
     formData.append("description", editDescription);
@@ -118,19 +167,39 @@ export default function PostDetailDialog({
     if (newImage) {
       formData.append("image", newImage);
     }
-      await axios.put(
-      `http://localhost:5000/api/posts/${post.id}`,
-        formData,
-        { 
-          withCredentials: true,
-        }
 
-      );
+    await axios.put(
+      `https://blog-backend-9eqd.onrender.com/api/posts/${post.id}`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (event) => {
+          const percent = Math.round(
+            (event.loaded * 100) / event.total
+          );
+          setProgress(percent);
 
-      setEditMode(false);
-      onClose();
-      onUpdated();
-    };
+          if (percent === 100) {
+              setProcessing(true); // phase 2
+          }
+        },
+      }
+    );
+
+    setEditMode(false);
+    onClose();
+    onUpdated();
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setSaving(false);
+    setProcessing(false);
+  }
+};
 
     const handleDeletePost = () => {
       setOpenDeleteAlert(true);
@@ -138,7 +207,7 @@ export default function PostDetailDialog({
 
     const confirmDeletePost = async () => {
       await axios.delete(
-      `http://localhost:5000/api/posts/${post.id}`,
+      `https://blog-backend-9eqd.onrender.com/api/posts/${post.id}`,
       { withCredentials: true }
       );
 
@@ -151,7 +220,7 @@ export default function PostDetailDialog({
         if (!comment.trim()) return;
 
         await axios.post(
-        "http://localhost:5000/api/comments/send",
+        "https://blog-backend-9eqd.onrender.com/api/comments/send",
         {
         post_id: post.id,
         comment_text: comment
@@ -161,7 +230,7 @@ export default function PostDetailDialog({
 
     // load
     const res = await axios.get(
-    `http://localhost:5000/api/comments/${post.id}`
+    `https://blog-backend-9eqd.onrender.com/api/comments/${post.id}`
     );
 
     setComments(res.data);
@@ -179,13 +248,13 @@ export default function PostDetailDialog({
 
     const handleDeleteComment = async (commentId) => {
         await axios.delete(
-        `http://localhost:5000/api/comments/${commentId}`,
+        `https://blog-backend-9eqd.onrender.com/api/comments/${commentId}`,
         { withCredentials: true }
         );
 
         // load
         const res = await axios.get(
-        `http://localhost:5000/api/comments/${post.id}`
+        `https://blog-backend-9eqd.onrender.com/api/comments/${post.id}`
         );
 
         setComments(res.data);
@@ -259,7 +328,7 @@ export default function PostDetailDialog({
       ) : (
         !deleteImage && (
           <img
-            src={`http://localhost:5000${post.image}`}
+            src={getImageUrl(post.image)}
             style={{
             maxWidth: "100%",
             height: "auto",
@@ -309,17 +378,20 @@ export default function PostDetailDialog({
         <input
           type="file"
           hidden
-          onChange={(e) => {
-            setDeleteImage(false);
-            setNewImage(e.target.files[0]);
+          onChange={async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+              setDeleteImage(false);
+
+              const compressed = await resizeImage(file);
+
+              setNewImage(compressed);
           }}
         />
       </Button>
       )}
     </Box>
-
-      
-
         {/* Detail */}
         <Box sx={{ flex: 2.5, display: "flex", flexDirection: "column", gap: 1}}>
           
@@ -541,7 +613,7 @@ export default function PostDetailDialog({
           src={
             newImage
               ? URL.createObjectURL(newImage)
-              : `http://localhost:5000${post.image}`
+              : getImageUrl(post.image)
           }
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -555,6 +627,84 @@ export default function PostDetailDialog({
         />
         </Box>
         )}
+
+        {/* Progress Dialog */}
+        <Backdrop
+          open={saving}
+          sx={{
+            color: "#fff",
+            zIndex: 9999,
+            backdropFilter: "blur(10px)", 
+            backgroundColor: "rgba(0,0,0,0.4)", 
+          }}
+        >
+        <Box
+          sx={{
+            background: "rgba(255,255,255,0.1)",
+            backdropFilter: "blur(20px)",
+            borderRadius: "20px",
+            p: 5,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            boxShadow: "0 0 40px rgba(0,0,0,0.5)",
+          }}
+        >
+        <CircularProgress
+          variant="determinate"
+          value={progress}
+          size={70}
+          thickness={4}
+          sx={{ color: "#fff" }}
+        />
+
+        <Typography fontWeight="bold">
+          {processing ? "Processing..." : `${progress}%`}
+        </Typography>
+
+        <Typography variant="caption">
+          {processing ? "Saving post..." : "Uploading..."}
+        </Typography>
+      </Box>
+      </Backdrop>
+
+      {/*Alert Image=null*/}
+      <Backdrop
+        open={showImageAlert}
+        onClick={() => setShowImageAlert(false)}
+        sx={{
+          zIndex: 9999,
+          backdropFilter: "blur(8px)",
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
+      >
+    <Box
+      sx={{
+        background: "rgba(0,0,0,0.75)",
+        backdropFilter: "blur(20px)",
+        borderRadius: "16px",
+        px: 5,
+        py: 3,
+        textAlign: "center",
+        boxShadow: "0 0 40px rgba(0,0,0,0.7)",
+      }}
+    >
+    <Typography
+      fontWeight="bold"
+      sx={{ color: "#fff", fontSize: 18 }}
+    >
+      Please upload an image before saving
+    </Typography>
+
+    <Typography
+      variant="caption"
+      sx={{ color: "#ccc" }}
+    >
+      You deleted the current image
+    </Typography>
+    </Box>
+    </Backdrop>
       </DialogContent>
     </Dialog>
   );

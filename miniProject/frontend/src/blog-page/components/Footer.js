@@ -63,10 +63,10 @@ export default function Footer() {
                 gutterBottom
                 sx={{ fontWeight: 600, mt: 2 }}
               >
-                Join the newsletter
+                Miniproject of RMUTP student
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                Subscribe for weekly updates. No spams ever!
+                This website was developed for educational project purposes !
               </Typography>
               <InputLabel htmlFor="email-newsletter">Email</InputLabel>
               <Stack direction="row" spacing={1} useFlexGap>
@@ -119,6 +119,9 @@ export default function Footer() {
             </Typography>
             <Typography color="text.secondary" variant="body2" mt={2}>
               Bunyanut Wanna 
+            </Typography>
+            <Typography color="text.secondary" variant="body2" mt={2}>
+              Phanuvit Raktong
             </Typography>
           </Box>
 
@@ -211,7 +214,7 @@ export default function Footer() {
             </IconButton>
           </Stack>
 
-              {/* Bunyanut Wanna */}
+          {/* Bunyanut Wanna */}
           <Stack
             direction="row"
             spacing={1}
@@ -237,7 +240,31 @@ export default function Footer() {
             </IconButton>
           </Stack>
 
-
+          {/* Phanuvit Raktong */}
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            sx={{ justifyContent: 'left', color: 'text.secondary' }}
+          >
+            <IconButton
+              size="small"
+              href="https://github.com/mui"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <GitHubIcon />
+            </IconButton>
+          
+            <IconButton
+              size="small"
+              href="https://www.instagram.com/aa_aarmy"
+              target="_blank"
+              sx={{ alignSelf: 'center' }}
+            >
+              <InstragramIcon />
+            </IconButton>
+          </Stack>
 
           </Box>
           <Box
