@@ -142,7 +142,7 @@ export default function SignUp(props) {
 
       try {
           await axios.post(
-          "https://blog-backend-9eqd.onrender.com/api/auth/register",
+          "http://localhost:5000/api/auth/register",
       {
         fullname,
         email,
@@ -182,7 +182,7 @@ const googleLogin = useGoogleLogin({
       );
 
       await axios.post(
-        "https://blog-backend-9eqd.onrender.com/api/auth/google-auth",
+        "http://localhost:5000/api/auth/google-auth",
         {
           email: res.data.email,
           name: res.data.name,

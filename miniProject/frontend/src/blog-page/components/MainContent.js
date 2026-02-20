@@ -25,16 +25,6 @@
   import Pagination from "@mui/material/Pagination";
 
 
-  const getImageUrl = (img) => {
-  if (!img) return "";
-
-  if (img.startsWith("http")) {
-    return img; // Cloudinary
-  }
-
-  return `https://blog-backend-9eqd.onrender.com${img}`; // uploads
-  };
-
   const stringAvatar = (name) => ({
       children: name ? name[0].toUpperCase() : "?",
     });
@@ -47,7 +37,6 @@
         year: "numeric",
       });
     };
-
   const StyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
@@ -177,7 +166,7 @@
     const fetchPosts = async () => {
       try {
         const res = await axios.get(
-          "https://blog-backend-9eqd.onrender.com/api/posts/allposts",
+          "http://localhost:5000/api/posts/allposts",
           { withCredentials: true }
         );
         setPosts(res.data);
@@ -192,7 +181,7 @@
 
     React.useEffect(() => {
     axios
-      .get("https://blog-backend-9eqd.onrender.com/api/auth/me", {
+      .get("http://localhost:5000/api/auth/me", {
         withCredentials: true,
       })
       .then((res) => {
@@ -372,7 +361,7 @@
             >
               <CardMedia
                 component="img"
-                image={getImageUrl(post.image)}
+                image={`http://localhost:5000${post.image}`}
                 sx={{
                   aspectRatio: '16 / 9',
                   borderBottom: '1px solid',

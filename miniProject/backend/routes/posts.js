@@ -1,27 +1,15 @@
 const express = require("express");
 const db = require("../config/db");
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("./cloudinary");
 
-const storage = new CloudinaryStorage({
-    cloudinary,
-    params: {
-        folder: "blog_uploads",
-        allowed_formats: ["jpg", "png", "jpeg"],
+const storage = multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + file.originalname);
     },
 });
 
-const upload = multer({ storage });
-
-// const storage = multer.diskStorage({
-//     destination: "uploads/",
-//     filename: (req, file, cb) => {
-//         cb(null, Date.now() + file.originalname);
-//     },
-// });
-
-// const upload = multer({storage});
+const upload = multer({storage});
 
 const router = express.Router();
 
@@ -32,10 +20,9 @@ if (!req.session.user) {
 }
   const { title, tag, description } = req.body;
   const userId = req.session.user.id;
-
   let imageUrl = null;
     if (req.file) {
-       imageUrl = req.file.path;
+       imageUrl = "/uploads/" + req.file.filename;
     }
   db.query(
     "INSERT INTO posts (title, image, tag, description, user_id) VALUES (?, ?, ?, ?, ?)",
@@ -98,7 +85,7 @@ router.put("/:id", upload.single("image"),(req, res) => {
   const params = [description];
 
   if (req.file) {
-    const imageUrl = req.file.path;
+    const imageUrl = "/uploads/" + req.file.filename;
     query += `, image = ?`;
     params.push(imageUrl);
   }
